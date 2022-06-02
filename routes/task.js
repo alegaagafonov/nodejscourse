@@ -1,44 +1,26 @@
 const express = require('express');
 const taskRouter = express.Router();
+const {
+    fetchTasks,
+    createTask,
+    deleteTask,
+    updateTask,
+    changeTaskStatus
+} = require('./../controller/task.controller');
 
-taskRouter.get('/', (req, res, next) => {
-    console.log('TASKS FETCHED!');
+// /tasks/ => GET
+taskRouter.get('/', fetchTasks);
 
-    res.status(200).send({
-       msg: 'Tasks are successfully fetched!'
-    });
-});
+// /tasks/create => POST
+taskRouter.post('/create', createTask);
 
-taskRouter.post('/create', (req, res, next) => {
-    console.log('TASKS UPDATED!');
+// /tasks/delete/id => DELETE
+taskRouter.delete('/delete/:id', deleteTask);
 
-    res.status(200).send({
-        msg: 'Tasks are successfully created!'
-    });
-});
+// /tasks/update => PUT
+taskRouter.put('/update', updateTask);
 
-taskRouter.delete('/delete', (req, res, next) => {
-    console.log('TASKS DELETED!');
-
-    res.status(200).send({
-        msg: 'Tasks are successfully deleted!'
-    });
-});
-
-taskRouter.put('/update', (req, res, next) => {
-    console.log('TASKS UPDATED!');
-
-    res.status(200).send({
-        msg: 'Tasks are successfully updated!'
-    });
-});
-
-taskRouter.put('/complete', (req, res, next) => {
-    console.log('TASK STATUS IS CHANGED!');
-
-    res.status(200).send({
-        msg: 'Task status is changed!'
-    });
-});
+// /tasks/complete => PUT
+taskRouter.put('/complete', changeTaskStatus);
 
 module.exports = taskRouter;
