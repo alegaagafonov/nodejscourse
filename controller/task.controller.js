@@ -1,18 +1,19 @@
 const Task = require("../models/task");
 
-const fetchTasks = (req, res) => {
+const fetchTasks = async (req, res) => {
     const taskQuery = Task.find();
 
-    taskQuery.then((response) => {
+    try {
+        const tasksInfo = await taskQuery;
 
-        if (response.length) {
+        if (tasksInfo.length) {
             res.status(200).send({
-                tasks: response.map(task => ({
+                tasks: tasksInfo.map(task => ({
                     id: task._id,
                     done: task.done,
                     label: task.label
                 })),
-                amount: response.length,
+                amount: tasksInfo.length,
                 msg: 'Tasks are successfully fetched!'
             });
         } else {
@@ -20,15 +21,15 @@ const fetchTasks = (req, res) => {
                 msg: 'Task list is empty',
             })
         }
-    }).catch((err) => {
+    } catch (err) {
         res.status(400).send({
             msg: 'Something went wrong!',
             details: err.message
         });
-    });
+    }
 };
 
-const createTask = (req, res) => {
+const createTask = async (req, res) => {
     const taskData = req.body;
 
     const task = new Task({
@@ -36,49 +37,47 @@ const createTask = (req, res) => {
         done: taskData.done
     });
 
-    task.save().then((response) => {
+    try {
+        const taskInfo = await task.save();
+
         res.status(200).send({
             msg: 'Task is successfully created!',
             task: {
-                id: response._id,
-                label: response.label,
-                done: response.done
+                id: taskInfo._id,
+                label: taskInfo.label,
+                done: taskInfo.done
             }
         });
-    }).catch(() => {
+    } catch (err) {
         res.status(400).send({
             msg: "An error occurred during task creation!"
         })
-    });
+    }
 }
 
-const deleteTask = (req, res) => {
+const deleteTask = async (req, res) => {
     const taskId = req.params.id;
 
-    Task.deleteOne({
-        _id: taskId
-    }).then(
-        (response) => {
-            if (response.deletedCount) {
-                res.status(200).send({
-                    msg: `Task with ${taskId} is successfully deleted!`
-                });
-            } else {
-                res.status(400).send({
-                    msg: `Task with id ${taskId} was not found!`
-                });
-            }
-        }
-    ).catch(
-        (err) => {
+    try {
+        const taskInfo = await Task.deleteOne({ _id: taskId });
+
+        if (taskInfo.deletedCount) {
+            res.status(200).send({
+                msg: `Task with ${taskId} is successfully deleted!`
+            });
+        } else {
             res.status(400).send({
-                msg: err.message
+                msg: `Task with id ${taskId} was not found!`
             });
         }
-    );
+    } catch (err) {
+        res.status(400).send({
+            msg: err.message
+        });
+    }
 };
 
-const updateTask = (req, res) => {
+const updateTask = async (req, res) => {
     const taskData = req.body;
 
     const task = new Task({
@@ -87,25 +86,22 @@ const updateTask = (req, res) => {
         done: taskData.done
     });
 
-    Task.updateOne({
-        _id: taskData.id
-    }, task).then(
-        (response) => {
-            res.status(200).send({
-                msg: `Task with id ${taskData.id} is successfully updated!`
-            });
-        }
-    ).catch(
-        (err) => {
-            res.status(400).send({
-                msg: 'Error during task updating!',
-                details: err.message
-            });
-        }
-    );
+    try {
+        const taskInfo = await Task.updateOne({ _id: taskData.id }, task);
+
+        res.status(200).send({
+            msg: `Task with id ${taskData.id} is successfully updated!`,
+            task: taskInfo
+        });
+    } catch (err) {
+        res.status(400).send({
+            msg: 'Error during task updating!',
+            details: err.message
+        });
+    }
 };
 
-const changeTaskStatus = (req, res) => {
+const changeTaskStatus = async (req, res) => {
     const taskInfo = req.body;
 
     const task = new Task({
@@ -113,22 +109,18 @@ const changeTaskStatus = (req, res) => {
         done: taskInfo.done
     });
 
-    Task.updateOne({
-        _id: taskInfo.id
-    }, task).then(
-        (response) => {
-            res.status(200).send({
-                msg: `Task with id ${taskInfo.id} is successfully changed!`
-            });
-        }
-    ).catch(
-        (err) => {
-            res.status(400).send({
-                msg: 'Error during status changing!',
-                details: err.message
-            });
-        }
-    );
+    try {
+        await Task.updateOne({ _id: taskInfo.id }, task);
+
+        res.status(200).send({
+            msg: `Task with id ${taskInfo.id} is successfully changed!`,
+        });
+    } catch (err) {
+        res.status(400).send({
+            msg: 'Error during status changing!',
+            details: err.message
+        });
+    }
 }
 
 module.exports = {

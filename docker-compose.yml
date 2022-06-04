@@ -1,0 +1,13 @@
+version: '3.2'
+services:
+  tasks:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    container_name: nodejscourse
+    ports:
+      - 5000:5000
+    restart: always
+    volumes:
+      - .:/app
+      - /nodejscourse/node_modules
