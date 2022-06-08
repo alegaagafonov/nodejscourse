@@ -1,10 +1,8 @@
-const Task = require("../models/task");
+const taskService = require('./../service/task.service');
 
 const fetchTasks = async (req, res) => {
-    const taskQuery = Task.find();
-
     try {
-        const tasksInfo = await taskQuery;
+        const tasksInfo = await taskService.getTasks();
 
         if (tasksInfo.length) {
             res.status(200).send({
@@ -32,13 +30,8 @@ const fetchTasks = async (req, res) => {
 const createTask = async (req, res) => {
     const taskData = req.body;
 
-    const task = new Task({
-        label: taskData.label,
-        done: taskData.done
-    });
-
     try {
-        const taskInfo = await task.save();
+        const taskInfo = await taskService.createTask(taskData);
 
         res.status(200).send({
             msg: 'Task is successfully created!',
@@ -59,7 +52,7 @@ const deleteTask = async (req, res) => {
     const taskId = req.params.id;
 
     try {
-        const taskInfo = await Task.deleteOne({ _id: taskId });
+        const taskInfo = await taskService.deleteTask(taskId);
 
         if (taskInfo.deletedCount) {
             res.status(200).send({
@@ -80,14 +73,8 @@ const deleteTask = async (req, res) => {
 const updateTask = async (req, res) => {
     const taskData = req.body;
 
-    const task = new Task({
-        _id: taskData.id,
-        label: taskData.label,
-        done: taskData.done
-    });
-
     try {
-        const taskInfo = await Task.updateOne({ _id: taskData.id }, task);
+        const taskInfo = await taskService.updateTask(taskData);
 
         res.status(200).send({
             msg: `Task with id ${taskData.id} is successfully updated!`,
@@ -104,13 +91,8 @@ const updateTask = async (req, res) => {
 const changeTaskStatus = async (req, res) => {
     const taskInfo = req.body;
 
-    const task = new Task({
-        _id: taskInfo.id,
-        done: taskInfo.done
-    });
-
     try {
-        await Task.updateOne({ _id: taskInfo.id }, task);
+        await taskService.updateTask(taskInfo);
 
         res.status(200).send({
             msg: `Task with id ${taskInfo.id} is successfully changed!`,
