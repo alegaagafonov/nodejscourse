@@ -92,7 +92,7 @@ const changeTaskStatus = async (req, res) => {
     const taskInfo = req.body;
 
     try {
-        await taskService.updateTask(taskInfo);
+        await taskService.changeTaskStatus(taskInfo);
 
         res.status(200).send({
             msg: `Task with id ${taskInfo.id} is successfully changed!`,
