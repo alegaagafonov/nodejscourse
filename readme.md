@@ -1,1 +1,1 @@
-# General information about the course
+# General information about the lecture #2
