@@ -11,4 +11,4 @@
 
 - create separate branch with your solution to this branch [repo](https://github.com/alegaagafonov/nodejscourse/tree/lecture3)
 
-### example implementation: https://medium.com/bb-tutorials-and-thoughts/how-to-serve-react-application-with-nginx-and-docker-9c51ac2c50ba
+### [example implementation:](https://medium.com/bb-tutorials-and-thoughts/how-to-serve-react-application-with-nginx-and-docker-9c51ac2c50ba)  
