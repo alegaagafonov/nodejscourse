@@ -12,13 +12,14 @@ export async function readTodos(_req, res) {
 }
 
 export async function createTodo(req, res) {
-  const { label } = req.body;
+  const { name, task } = req.body;
 
-  if (!label || !_.isString(label)) return res.sendStatus(400);
+  if (!name || !_.isString(name)) return res.sendStatus(400);
 
   const toDo = {
-    label: label,
-    done: false
+    name: name,
+    task: task || "",
+    complete: false
   }
 
   const createResult = await collection.insertOne(toDo);
@@ -30,15 +31,14 @@ export async function createTodo(req, res) {
 export async function updateTodo(req, res) {
   const { id } = req.params;
 
-  const { label } = req.body;
+  const { name, task } = req.body;
 
-  if (!label || !_.isString(label)) return res.sendStatus(400);
+  if (!name || !_.isString(name)) return res.sendStatus(400);
 
   const updateResult = await collection.updateOne(
     { _id: new ObjectId(id) },
-    { $set: { label } }
+    { $set: { name, task } }
   );
-  if (!updateResult.modifiedCount) return res.sendStatus(404);
 
   const findResult = await collection.findOne({ _id: new ObjectId(id) });
   res.send(findResult);
@@ -47,15 +47,14 @@ export async function updateTodo(req, res) {
 export async function completeTodo(req, res) {
   const { id } = req.params;
 
-  const { done } = req.body;
+  const { complete } = req.body;
 
-  if (!_.isBoolean(done)) return res.sendStatus(400);
+  if (!_.isBoolean(complete)) return res.sendStatus(400);
 
   const completeResult = await collection.updateOne(
     { _id: new ObjectId(id) },
-    { $set: { done } }
+    { $set: { complete } }
   );
-  if (!completeResult.modifiedCount) return res.sendStatus(404);
 
   const findResult = await collection.findOne({ _id: new ObjectId(id) });
   res.send(findResult);

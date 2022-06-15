@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
 import bodyParser from "body-parser";
 import { 
   completeTodo, 
@@ -10,10 +11,13 @@ import {
 } from "./routes/routes.js"
 import { client } from "./mongo-db.js";
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 const jsonParser = bodyParser.json()
+
+//middlewares
+app.use(cors());
 
 // Routes
 app.get("/", readTodos);
