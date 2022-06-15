@@ -1,5 +1,5 @@
 const express = require("express");
-const { TodoItem } = require("../models/models");
+const { TodoItem } = require("../models");
 const app = express();
 
 app.get("/", async (req, res) => {
