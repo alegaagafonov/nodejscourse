@@ -4,18 +4,18 @@ const routes = require("./routes");
 const app = express();
 
 app.use(express.json());
-const port = 3006;
-
-const login = "login";
-const password = "password";
+const port = 3001;
 const DB_NAME = "base_name";
 
-const uri = `mongodb+srv://${login}:${password}@cluster.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
+const uri = `mongodb://mongodb:27017/${DB_NAME}`;
 
 mongoose.connect(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
+const connection = mongoose.connection;
+connection.once("open", () => console.log(`MongoDB connection established`));
 
 app.use(routes);
 
