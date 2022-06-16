@@ -3,10 +3,9 @@ version: '3.8'
 services:
   mongodb:
     image: mongo:latest
+    container_name: todo-mongodb
     restart: unless-stopped
     env_file: ./.env
-    ports:
-      - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
     volumes:
       - db:/data/db
     networks:
@@ -15,15 +14,31 @@ services:
   api:
     depends_on:
       - mongodb
-    #image: alega/todo-api
-    build: ./api
+    container_name: todo-api
+    build:
+      dockerfile: Dockerfile
+      context: ./api
     restart: unless-stopped
+    env_file: ./.env
     ports:
       - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
     networks:
       - backend
 
-volumes: 
+  client:
+    container_name: todo-client
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $CLIENT_LOCAL_PORT:$CLIENT_DOCKER_PORT
+    networks:
+      - backend
+
+volumes:
   db:
+    name: $DB_VOLUME_ID
 networks:
   backend:
