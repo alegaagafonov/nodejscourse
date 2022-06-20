@@ -3,6 +3,7 @@ version: '3.8'
 services:
   mongodb:
     image: mongo:latest
+    container_name: todo_mongo_db
     restart: unless-stopped
     env_file: ./.env
     ports:
@@ -11,11 +12,11 @@ services:
       - db:/data/db
     networks:
       - backend
-  
+
   api:
     depends_on:
       - mongodb
-    #image: alega/todo-api
+    container_name: todo_api
     build: ./api
     restart: unless-stopped
     ports:
@@ -23,7 +24,18 @@ services:
     networks:
       - backend
 
-volumes: 
+  client:
+    container_name: todo_client
+    env_file: ./.env
+    build:
+      context: ./client
+    restart: unless-stopped
+    ports:
+      - $CLIENT_LOCAL_PORT:$CLIENT_DOCKER_PORT
+    networks:
+      - backend
+
+volumes:
   db:
 networks:
   backend:
